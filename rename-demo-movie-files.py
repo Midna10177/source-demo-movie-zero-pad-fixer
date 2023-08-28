@@ -37,8 +37,7 @@ def fix_zero_padded_file(filename, basename, zeropadlength, ext=".tga"):
  newfilename = filename
  newfilename = newfilename.removeprefix(basename)
  newfilename = newfilename.removesuffix(ext)
- newfilename.lstrip("0")
- try: int(newfilename)
+ try: newfilename = str(int(newfilename))
  except: raise ValueError("could not file number sequence from file: \""+filename+"\", got \""+newfilename+"\" instead, did you not specify the entire basefilename?")
  newfilename = newfilename.zfill(zeropadlength)
  newfilename = basename + newfilename + ext
@@ -54,6 +53,7 @@ def main():
  parser.add_argument('-d', '--folder', help = "folder containing the tga files, defaults to current dir", default = os.getcwd())
  parser.add_argument('-v', '--verbose', action = 'store_true', help = "print out each file operation verbosely")
  parser.add_argument('-e', '--extension', help = "file extension, defaults to \".tga\"", default = ".tga")
+ parser.add_argument('-p', '--print', help = "dont actually move files, just print.", action = "store_true")
  
  
  args = parser.parse_args()
@@ -80,8 +80,8 @@ def main():
  
  for file in files:
   newfile = fix_zero_padded_file(file, args.basefilename, zeropadlength, args.extension)
-  if args.verbose: print( 'moving ',file,'\t->', newfile)
-  os.rename(file, newfile)
+  if args.verbose or args.print: print( 'moving ',file,'\t->', newfile)
+  if not args.print: os.rename(file, newfile)
  
  print("done!~ renamed",len(files),"files!")
  
